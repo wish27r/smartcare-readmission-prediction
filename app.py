@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# ---------- Load saved model and preprocessing objects ----------
+#Loading saved model and preprocessing objects
 model = joblib.load('readmission_model.pkl')
 scaler = joblib.load('scaler.pkl')
 feature_columns = joblib.load('feature_columns.pkl')
@@ -10,13 +10,36 @@ numeric_features = joblib.load('numeric_features.pkl')
 
 st.set_page_config(page_title="SmartCare Readmission Predictor", page_icon="🏥", layout="centered")
 
-st.title("🏥 SmartCare Hospital")
+#Simple password protection
+def check_password():
+    def password_entered():
+        if st.session_state["password"] == "smartcare2026":
+            st.session_state["password_correct"] = True
+            del st.session_state["password"]
+        else:
+            st.session_state["password_correct"] = False
+
+    if "password_correct" not in st.session_state:
+        st.text_input("Enter password", type="password", on_change=password_entered, key="password")
+        return False
+    elif not st.session_state["password_correct"]:
+        st.text_input("Enter password", type="password", on_change=password_entered, key="password")
+        st.error("Incorrect password")
+        return False
+    else:
+        return True
+
+if not check_password():
+    st.stop()
+
+#App UI
+st.title("SmartCare Hospital")
 st.subheader("30-Day Patient Readmission Risk Predictor")
 st.write("Enter patient details below to predict the likelihood of readmission within 30 days of discharge.")
 
 st.divider()
 
-# ---------- Input form ----------
+#Input form
 col1, col2 = st.columns(2)
 
 with col1:
@@ -43,7 +66,7 @@ appointment_month = st.slider("Appointment Month", 1, 12, 6)
 
 st.divider()
 
-# ---------- Predict button ----------
+#Predict button
 if st.button("Predict Readmission Risk", type="primary"):
 
     # Build a single-row dataframe matching the raw input structure
