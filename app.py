@@ -129,7 +129,7 @@ st.markdown(
 )
 
 #App UI
-st.title("SmartCare Hospital")
+st.markdown("<h1 style='font-size: 3.2em;'>SmartCare</h1>", unsafe_allow_html=True)
 st.subheader("30-Day Patient Readmission Risk Predictor")
 
 tab1, tab2, tab3 = st.tabs(["Predict", "Model Insights", "About"])
