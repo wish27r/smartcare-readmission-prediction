@@ -13,50 +13,84 @@ numeric_features = joblib.load('numeric_features.pkl')
 st.set_page_config(page_title="SmartCare Readmission Predictor", page_icon="🏥", layout="centered")
 
 #Image URLs
-LOGIN_BG = "https://raw.githubusercontent.com/wish27r/smartcare-readmission-prediction/main/login_bg.png"
+BACKGROUND_IMG = "https://raw.githubusercontent.com/wish27r/smartcare-readmission-prediction/main/login_bg.png"
 PREDICT_HEADER = "https://raw.githubusercontent.com/wish27r/smartcare-readmission-prediction/main/predict_header.png"
 INSIGHTS_HEADER = "https://raw.githubusercontent.com/wish27r/smartcare-readmission-prediction/main/insights_header.png"
 ABOUT_HEADER = "https://raw.githubusercontent.com/wish27r/smartcare-readmission-prediction/main/about_header.png"
 
-#Background image helper (with readability overlay)
-def set_background(image_url):
-    st.markdown(
-        f"""
-        <style>
-        .stApp {{
-            background-image: linear-gradient(rgba(255,255,255,0.75), rgba(255,255,255,0.75)), url("{image_url}");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }}
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
+#Global background + glass styling
+st.markdown(
+    f"""
+    <style>
+    .stApp {{
+        background-image: linear-gradient(rgba(250,250,252,0.88), rgba(250,250,252,0.88)), url("{BACKGROUND_IMG}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }}
 
-#Simple password protection
-def check_password():
-    def password_entered():
-        if st.session_state["password"] == "smartcare2026":
-            st.session_state["password_correct"] = True
-            del st.session_state["password"]
-        else:
-            st.session_state["password_correct"] = False
+    /* Glass cards for containers */
+    div[data-testid="stVerticalBlockBorderWrapper"] {{
+        background: rgba(255, 255, 255, 0.35);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 10px;
+    }}
 
-    if "password_correct" not in st.session_state:
-        set_background(LOGIN_BG)
-        st.text_input("Enter password", type="password", on_change=password_entered, key="password")
-        return False
-    elif not st.session_state["password_correct"]:
-        set_background(LOGIN_BG)
-        st.text_input("Enter password", type="password", on_change=password_entered, key="password")
-        st.error("Incorrect password")
-        return False
-    else:
-        return True
+    /* Glass buttons */
+    .stButton > button {{
+        background: rgba(139, 47, 201, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(139, 47, 201, 0.4);
+        border-radius: 12px;
+        color: #4A1868;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }}
+    .stButton > button:hover {{
+        background: rgba(139, 47, 201, 0.3);
+        border: 1px solid rgba(139, 47, 201, 0.6);
+        transform: translateY(-1px);
+    }}
 
-if not check_password():
-    st.stop()
+    /* Glass input fields */
+    div[data-baseweb="input"], div[data-baseweb="select"] {{
+        background: rgba(255, 255, 255, 0.5) !important;
+        backdrop-filter: blur(8px);
+        border-radius: 10px !important;
+    }}
+
+    /* Glass tab bar */
+    .stTabs [data-baseweb="tab-list"] {{
+        background: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+        border-radius: 14px;
+        padding: 6px;
+        gap: 4px;
+    }}
+    .stTabs [data-baseweb="tab"] {{
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }}
+    .stTabs [aria-selected="true"] {{
+        background: rgba(139, 47, 201, 0.2);
+    }}
+
+    /* Smooth fade transition when switching tab content */
+    .stTabs [data-baseweb="tab-panel"] {{
+        animation: fadeIn 0.45s ease-in-out;
+    }}
+    @keyframes fadeIn {{
+        from {{ opacity: 0; transform: translateY(6px); }}
+        to {{ opacity: 1; transform: translateY(0); }}
+    }}
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 #App UI
 st.title("SmartCare Hospital")
@@ -195,24 +229,25 @@ with tab2:
 #TAB 3: ABOUT
 with tab3:
     st.image(ABOUT_HEADER, use_container_width=True)
-    st.write("### About This Project")
-    st.markdown("""
-    **SmartCare Hospital AI — 30-Day Readmission Predictor**
-
-    This prototype was built as part of the CCS3440 Artificial Intelligence coursework. 
-    It predicts whether a patient is likely to be readmitted to hospital within 30 days 
-    of discharge, based on demographic, clinical, and operational data.
-
-    **Model:** XGBoost Classifier (selected based on ROC-AUC after comparing Logistic 
-    Regression, Random Forest, and XGBoost)
-
-    **Dataset:** SmartCare Hospital AI Dataset — 330 admitted patient records
-
-    **Explainability:** Feature importance and SHAP were used to interpret model predictions
-
-    ⚠️**Disclaimer:** This is an educational coursework prototype only. It is not a 
-    certified medical device and should never be used for real clinical decision-making.
-
-    ---
-    © 2026 SmartCare AI · CCS3440 Coursework Project · SLTC
-    """)
+    st.markdown(
+        """
+        <div style="text-align: center; max-width: 700px; margin: 0 auto;">
+            <h3>About This Project</h3>
+            <p><strong>SmartCare Hospital AI — 30-Day Readmission Predictor</strong></p>
+            <p>This prototype was built as part of the CCS3440 Artificial Intelligence coursework.
+            It predicts whether a patient is likely to be readmitted to hospital within 30 days
+            of discharge, based on demographic, clinical, and operational data.</p>
+            <p><strong>Model:</strong> XGBoost Classifier (selected based on ROC-AUC after comparing
+            Logistic Regression, Random Forest, and XGBoost)</p>
+            <p><strong>Dataset:</strong> SmartCare Hospital AI Dataset — 330 admitted patient records</p>
+            <p><strong>Explainability:</strong> Feature importance and SHAP were used to interpret
+            model predictions</p>
+            <p>⚠️ <strong>Disclaimer:</strong> This is an educational coursework prototype only.
+            It is not a certified medical device and should never be used for real clinical
+            decision-making.</p>
+            <hr>
+            <p style="font-size: 0.85em; opacity: 0.75;">© 2026 SmartCare AI · CCS3440 Coursework Project · SLTC</p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
