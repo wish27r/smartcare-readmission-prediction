@@ -18,65 +18,88 @@ PREDICT_HEADER = "https://raw.githubusercontent.com/wish27r/smartcare-readmissio
 INSIGHTS_HEADER = "https://raw.githubusercontent.com/wish27r/smartcare-readmission-prediction/main/insights_header.png"
 ABOUT_HEADER = "https://raw.githubusercontent.com/wish27r/smartcare-readmission-prediction/main/about_header.png"
 
-#Global background + glass styling
+# ---------- Global dark-violet background + glass styling ----------
 st.markdown(
     f"""
     <style>
     .stApp {{
-        background-image: linear-gradient(rgba(250,250,252,0.88), rgba(250,250,252,0.88)), url("{BACKGROUND_IMG}");
+        background-image: linear-gradient(rgba(24,11,46,0.55), rgba(24,11,46,0.72)), url("{BACKGROUND_IMG}");
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
     }}
 
+    h1, h2, h3, h4, h5, h6, p, span, label, .stMarkdown {{
+        color: #F0E6FF !important;
+    }}
+
     /* Glass cards for containers */
     div[data-testid="stVerticalBlockBorderWrapper"] {{
-        background: rgba(255, 255, 255, 0.35);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.4);
-        padding: 10px;
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(14px);
+        -webkit-backdrop-filter: blur(14px);
+        border-radius: 18px;
+        border: 1px solid rgba(178, 75, 243, 0.35);
+        padding: 14px;
     }}
 
     /* Glass buttons */
     .stButton > button {{
-        background: rgba(139, 47, 201, 0.15);
+        background: rgba(178, 75, 243, 0.18);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(139, 47, 201, 0.4);
+        border: 1px solid rgba(178, 75, 243, 0.55);
         border-radius: 12px;
-        color: #4A1868;
+        color: #F0E6FF;
         font-weight: 600;
         transition: all 0.3s ease;
     }}
     .stButton > button:hover {{
-        background: rgba(139, 47, 201, 0.3);
-        border: 1px solid rgba(139, 47, 201, 0.6);
+        background: rgba(178, 75, 243, 0.4);
+        border: 1px solid rgba(178, 75, 243, 0.8);
+        box-shadow: 0 0 12px rgba(178, 75, 243, 0.5);
         transform: translateY(-1px);
     }}
 
-    /* Glass input fields */
-    div[data-baseweb="input"], div[data-baseweb="select"] {{
-        background: rgba(255, 255, 255, 0.5) !important;
-        backdrop-filter: blur(8px);
+    /* Glass input fields, selects, number inputs, sliders */
+    div[data-baseweb="input"],
+    div[data-baseweb="select"],
+    div[data-baseweb="base-input"],
+    .stNumberInput > div > div,
+    .stTextInput > div > div {{
+        background: rgba(255, 255, 255, 0.08) !important;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(178, 75, 243, 0.35) !important;
         border-radius: 10px !important;
+        color: #F0E6FF !important;
+    }}
+
+    input, select, textarea {{
+        color: #F0E6FF !important;
+    }}
+
+    .stSlider > div > div > div {{
+        background: rgba(178, 75, 243, 0.25) !important;
     }}
 
     /* Glass tab bar */
     .stTabs [data-baseweb="tab-list"] {{
-        background: rgba(255, 255, 255, 0.3);
-        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.06);
+        backdrop-filter: blur(12px);
         border-radius: 14px;
         padding: 6px;
         gap: 4px;
+        border: 1px solid rgba(178, 75, 243, 0.25);
     }}
     .stTabs [data-baseweb="tab"] {{
         border-radius: 10px;
         transition: all 0.3s ease;
+        color: #F0E6FF !important;
     }}
     .stTabs [aria-selected="true"] {{
-        background: rgba(139, 47, 201, 0.2);
+        background: rgba(178, 75, 243, 0.3);
+        box-shadow: 0 0 10px rgba(178, 75, 243, 0.4);
     }}
 
     /* Smooth fade transition when switching tab content */
@@ -86,6 +109,19 @@ st.markdown(
     @keyframes fadeIn {{
         from {{ opacity: 0; transform: translateY(6px); }}
         to {{ opacity: 1; transform: translateY(0); }}
+    }}
+
+    /* Glass card class for custom sections (About tab) */
+    .glass-card {{
+        background: rgba(255, 255, 255, 0.07);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(178, 75, 243, 0.4);
+        border-radius: 20px;
+        padding: 28px 32px;
+        margin: 16px auto;
+        max-width: 680px;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
     }}
     </style>
     """,
@@ -189,15 +225,20 @@ with tab1:
         contrib_df = contrib_df.sort_values('abs_val', ascending=False).head(8)
         contrib_df = contrib_df.sort_values('Contribution')
 
-        colors = ['#D64550' if val > 0 else '#3E7CB1' for val in contrib_df['Contribution']]
+        colors = ['#E85D75' if val > 0 else '#B24BF3' for val in contrib_df['Contribution']]
 
         fig, ax = plt.subplots(figsize=(7, 4))
+        fig.patch.set_alpha(0)
+        ax.set_facecolor('none')
         ax.barh(contrib_df['Feature'], contrib_df['Contribution'], color=colors)
-        ax.set_xlabel("Impact on prediction (SHAP value)")
-        ax.axvline(0, color='black', linewidth=0.8)
+        ax.set_xlabel("Impact on prediction (SHAP value)", color='#F0E6FF')
+        ax.tick_params(colors='#F0E6FF')
+        ax.axvline(0, color='#F0E6FF', linewidth=0.8)
+        for spine in ax.spines.values():
+            spine.set_color('#F0E6FF')
         st.pyplot(fig)
 
-        st.caption("🔴 Red bars pushed the prediction toward Readmitted. 🔵 Blue bars pushed it toward Not Readmitted.")
+        st.caption("🔴 Red/pink bars pushed the prediction toward Readmitted. 🟣 Purple bars pushed it toward Not Readmitted.")
 
 #TAB 2: MODEL INSIGHTS
 with tab2:
@@ -217,21 +258,27 @@ with tab2:
 
     st.bar_chart(importance_data.set_index('Feature'))
 
-    st.write("---")
-    st.write("**Key takeaways:**")
-    st.markdown("""
-    - **Appointment month** is the strongest overall driver, suggesting a seasonal pattern in readmissions.
-    - **Previous admissions** strongly influences risk — patients with a history of frequent admissions are more likely to return.
-    - **Missed appointment rate** reflects patient engagement with follow-up care.
-    - Clinical vitals (cholesterol, BMI, blood pressure) matter meaningfully in combination, even though no single vital strongly predicts readmission alone.
-    """)
+    st.markdown(
+        """
+        <div class="glass-card">
+            <strong>Key takeaways:</strong>
+            <ul>
+                <li><strong>Appointment month</strong> is the strongest overall driver, suggesting a seasonal pattern in readmissions.</li>
+                <li><strong>Previous admissions</strong> strongly influences risk — patients with a history of frequent admissions are more likely to return.</li>
+                <li><strong>Missed appointment rate</strong> reflects patient engagement with follow-up care.</li>
+                <li>Clinical vitals (cholesterol, BMI, blood pressure) matter meaningfully in combination, even though no single vital strongly predicts readmission alone.</li>
+            </ul>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 #TAB 3: ABOUT
 with tab3:
     st.image(ABOUT_HEADER, use_container_width=True)
     st.markdown(
         """
-        <div style="text-align: center; max-width: 700px; margin: 0 auto;">
+        <div class="glass-card" style="text-align: center;">
             <h3>About This Project</h3>
             <p><strong>SmartCare Hospital AI — 30-Day Readmission Predictor</strong></p>
             <p>This prototype was built as part of the CCS3440 Artificial Intelligence coursework.
@@ -245,7 +292,7 @@ with tab3:
             <p>⚠️ <strong>Disclaimer:</strong> This is an educational coursework prototype only.
             It is not a certified medical device and should never be used for real clinical
             decision-making.</p>
-            <hr>
+            <hr style="border-color: rgba(178,75,243,0.3);">
             <p style="font-size: 0.85em; opacity: 0.75;">© 2026 SmartCare AI · CCS3440 Coursework Project · SLTC</p>
         </div>
         """,
